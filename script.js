@@ -1,7 +1,7 @@
 // API 1: WIKIMEDIA
 
 // Buscar el ID en HTML
-const contenidoWikimedia = document.getElementById("info-wikimedia");
+const tablaWikimedia = document.getElementById("tabla-wikimedia");
 
 // Hacer la petición a Wikimedia con fetch
 fetch("https://es.wikipedia.org/api/rest_v1/page/summary/Austria")
@@ -16,27 +16,46 @@ fetch("https://es.wikipedia.org/api/rest_v1/page/summary/Austria")
     return respuesta.json();
   })
   .then((datos) => {
-    // Visualizar los datos en consola
-    console.log("Datos de Wikimedia");
-    console.log(JSON.stringify(datos));
+    // Crear arreglo para seleccionar los datos
+    const informacion = [
+      {
+        nombre: "Pais",
+        valor: datos.title,
+      },
+      {
+        nombre: "Descripción",
+        valor: datos.description,
+      },
+      {
+        nombre: "Resumen",
+        valor: datos.extract,
+      },
+    ];
 
-    // Al convertirse los datos, se colocan en el id
-    contenidoWikimedia.innerHTML = `
-      <h3>${datos.title}</h3>
-      <img src="${datos.thumbnail.source}" width="300">
-      <p>${datos.extract}</p>
-      <a href="${datos.content_urls.desktop.page}" target="_blank">Leer más</a>
-    `;
+    // Recorrer los datos del arreglo
+    informacion.forEach(function (dato) {
+      // Crear la fila para la tabla
+      const fila = document.createElement("tr");
+
+      // Crear las celdas de la fila
+      fila.innerHTML = `
+        <td>${dato.nombre}</td>
+        <td>${dato.valor}</td>
+      `;
+
+      // Agregar la fila a la tabla
+      tablaWikimedia.appendChild(fila);
+    });
   })
   .catch((error) => {
     // Finalmente, se verifican errores y aparece un mensaje indicando el error
-    contenidoWikimedia.textContent = "Ocurrió un error: " + error.message;
+    tablaWikimedia.textContent = "Ocurrió un error: " + error.message;
   });
 
 // API 2:  OPEN METEO
 
-// Buscar el id de HTML
-const contenidoClima = document.getElementById("info-clima");
+// Buscar el id de la tabla en HTML
+const tablaClima = document.getElementById("tabla-clima");
 
 // Se hace la petición con fetch
 fetch(
@@ -52,30 +71,35 @@ fetch(
     return respuesta.json();
   })
   .then((datos) => {
-    // Datos en consola
-    console.log("Datos de Open Meteo");
-    console.log(JSON.stringify(datos));
+    // Recorrer datos diarios
+    for (let i = 0; i < datos.daily.time.length; i++) {
+      // Crear una fila
+      const fila = document.createElement("tr");
 
-    // Se colocan los elementos en HTML
-    contenidoClima.innerHTML = `
-      <p><strong>Temperatura actual: </strong>${datos.current.temperature_2m} °C</p>
-      <p><strong>Temperatura máxima: </strong>${datos.daily.temperature_2m_max[0]} °C</p>
-      <p><strong>Temperatura mínima: </strong>${datos.daily.temperature_2m_min[0]} °C</p>
-      <p><strong>Probabilidad de lluvia: </strong>${datos.daily.precipitation_probability_max[0]}%</p>
-    `;
+      // Crear las celdas
+      fila.innerHTML = `
+        <td>${datos.daily.time[i]}</td>
+        <td>${datos.daily.temperature_2m_max[i]} °C</td>
+        <td>${datos.daily.temperature_2m_min[i]} °C</td>
+        <td>${datos.daily.precipitation_probability_max[i]}%</td>
+      `;
+
+      // Agregar las filas a la tabla
+      tablaClima.appendChild(fila);
+    }
   })
   .catch((error) => {
     // Verificación de errores
-    contenidoClima.textContent = "Ocurrió un error: " + error.message;
+    tablaClima.textContent = "Ocurrió un error: " + error.message;
   });
 
 // API 3: FRANKFURTER
 
 // Buscar el id de HTML
-const contenidoMoneda = document.getElementById("moneda-aus");
+const tablaMoneda = document.getElementById("tabla-moneda");
 
 // Hacer la petición
-fetch("https://api.frankfurter.dev/v2/rate/EUR/MXN")
+fetch("https://api.frankfurter.dev/v2/rates?base=EUR&quotes=MXN,USD,GBP,JPY")
   .then((respuesta) => {
     // Verificar la respuesta
     if (!respuesta.ok) {
@@ -86,49 +110,22 @@ fetch("https://api.frankfurter.dev/v2/rate/EUR/MXN")
     return respuesta.json();
   })
   .then((datos) => {
-    // Datos en consola
-    console.log("Datos de Frankfurter");
-    console.log(JSON.stringify(datos));
+    // Recorrer los datos
+    datos.forEach(function (moneda) {
+      // Crear fila
+      const fila = document.createElement("tr");
 
-    // Insertar respuesta en HTML
-    contenidoMoneda.innerHTML = `
-      <p><strong>Moneda:</strong> ${datos.base}</p>
-      <p><strong>Cambio al día: </strong> 1 EUR = ${datos.rate} MXN</p>
-    `;
+      // Crear celdas
+      fila.innerHTML = `
+        <td>${moneda.base}</td>
+        <td>${moneda.quote}</td>
+        <td>${moneda.rate}</td>
+      `;
+
+      // Agregar fila a la tabla
+      tablaMoneda.appendChild(fila);
+    });
   })
   .catch((error) => {
-    contenidoMoneda.textContent = "Ocurrió un error: " + error.message;
+    tablaMoneda.textContent = "Ocurrió un error: " + error.message;
   });
-
-// Función para convertir moneda
-function convertirMoneda(monedaOrigen, monedaDestino, cantidad) {
-  const api = "https://api.frankfurter.dev";
-
-  return fetch(`${api}/v2/rate/${monedaOrigen}/${monedaDestino}`)
-    .then((respuesta) => {
-      if (!respuesta.ok) {
-        throw new Error("No se pudo realizar la conversión");
-      }
-
-      return respuesta.json();
-    })
-    .then((datos) => (cantidad * datos.rate).toFixed(2));
-}
-
-// Variables del conversor de moneda
-const cantidadEuros = document.getElementById("cantidad-euros");
-const btnConvertir = document.getElementById("convertir");
-const resultadoConversion = document.getElementById("conversion");
-
-// Manejo de evento del botón
-btnConvertir.addEventListener("click", function () {
-  const euros = Number(cantidadEuros.value);
-  convertirMoneda("EUR", "MXN", euros)
-    .then(function (resultado) {
-      resultadoConversion.textContent = euros + " EUR = " + resultado + " MXN";
-    })
-    .catch(function (error) {
-      resultadoConversion.textContent = "Ocurrió un error: " + error.message;
-    });
-});
-

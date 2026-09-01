@@ -3,32 +3,65 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Actividad 1.2. Comunicación con un API</title>
+    <title>Actividad 1.3. Aplicación HTML</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <h1>Conoce Austria</h1>
+    <img
+      src="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/41/Flag_of_Austria.svg/960px-Flag_of_Austria.svg.png?utm_source=es.wikipedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+      class="bandera"
+    />
 
     <!-- API 1 -->
     <section>
-      <h2>Información</h2>
-      <div id="info-wikimedia"></div>
+      <h2>Información de Austria</h2>
+
+      <table>
+        <thread>
+          <tr>
+            <th>Información</th>
+            <th>Dato</th>
+          </tr>
+        </thread>
+
+        <tbody id="tabla-wikimedia"></tbody>
+      </table>
     </section>
 
     <!-- API 2 -->
     <section>
-      <h2>Clima actual en Viena</h2>
-      <div id="info-clima"></div>
+      <h2>Clima en Viena</h2>
+
+      <table>
+        <thread>
+          <tr>
+            <th>Fecha</th>
+            <th>Temperatura máxima</th>
+            <th>Temperatura mínima</th>
+            <th>Probabilidad de lluvia</th>
+          </tr>
+        </thread>
+
+        <tbody id="tabla-clima"></tbody>
+      </table>
     </section>
 
     <!-- API 3 -->
     <section>
-      <h2>Moneda y tipo de cambio</h2>
-      <div id="moneda-aus"></div>
-      <label for="cantidad-euros"><strong>Cantidad en euros: </strong></label>
-      <input type="number" id="cantidad-euros" value="1" min="0" />
-      <button id="convertir">Convertir a pesos mexicanos</button>
-      <p id="conversion"></p>
+      <h2>Tipos de cambio</h2>
+
+      <table>
+        <thread>
+          <tr>
+            <th>Moneda origen</th>
+            <th>Moneda destino</th>
+            <th>Tipo de cambio</th>
+          </tr>
+        </thread>
+
+        <tbody id="tabla-moneda"></tbody>
+      </table>
     </section>
 
     <script src="script.js"></script>
